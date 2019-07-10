@@ -10,19 +10,10 @@ def insertPhoto1():
     firstPhoto.config(text=ph1)
     img = ImageTk.PhotoImage(Image.open(ph1))
  
-def insertPhoto2():
-    ph2 = fd.askopenfilename()
-    secondPhoto.config(text=ph2)
-    img = ImageTk.PhotoImage(Image.open(ph2)) 
-
 def results():
-    r = create(firstPhoto.cget('text'), secondPhoto.cget('text'))
-    if r:
-        photoResults.config(bg = 'green')
-    else :
-        photoResults.config(bg = 'red')
+    r = create(firstPhoto.cget('text'))
+    photoResults.config(text = r)
     
-
 root = Tk()
 
 b1 = Button(text="Открыть первую фотографию", command=insertPhoto1)
@@ -30,9 +21,6 @@ b1.pack()
 
 firstPhoto = Label(root)
 firstPhoto.pack()
-
-b2 = Button(text="Открыть вторую фотографию", command=insertPhoto2)
-b2.pack()
 
 secondPhoto = Label(root)
 secondPhoto.pack()
