@@ -1,10 +1,22 @@
 import dlib
 import cv2
+import base64
 import tkinter as tk
 from skimage import io #загрузка фотографий из файлов
-from scipy.spatial import distance 
+from scipy.spatial import distance
+from io import StringIO
 import sqlite3 as lite
 import sys
+
+
+def img_to_base64(ph):
+	with open(ph, "rb") as image_file:
+		encoded_string = base64.b64encode(image_file.read())
+	return encoded_string
+
+def base64_to_img(strBase):
+	with open("imageToSave.png", "wb") as fh:
+		fh.write(base64.decodebytes(strBase))
 
 
 #расчет евклидового пространства между векторами признаков
@@ -12,16 +24,19 @@ def create(ph1):
 
 	con = lite.connect('face.db')
 
-	sp = dlib.shape_predictor('/Users/aleksandrgolubkin/Documents/nNetwork/shape_predictor_68_face_landmarks.dat')
+	sp = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 # описание модели для выделения на фотографии лица
 
 
-	facerec = dlib.face_recognition_model_v1('/Users/aleksandrgolubkin/Documents/nNetwork/dlib_face_recognition_resnet_model_v1.dat')
+	facerec = dlib.face_recognition_model_v1('dlib_face_recognition_resnet_model_v1.dat')
 # обученная нейронная сеть
 
 	print(ph1)
 	detector = dlib.get_frontal_face_detector()
 	img = io.imread(ph1)
+	bs64 = img_to_base64(ph1)
+	print(bs64)
+	base64_to_img(bs64)
 
 	win1 = dlib.image_window()
 	win1.clear_overlay()
@@ -44,11 +59,11 @@ def create(ph1):
 
 # print(face_descriptot1)
 
-	with con:    
-		cur = con.cursor()    
+	with con:
+		cur = con.cursor()
 		cur.execute("SELECT * FROM face")
 		rows = cur.fetchall()
- 
+
 		for row in rows:
 			text = row[1]
 			img = io.imread(text)
@@ -81,5 +96,6 @@ def create(ph1):
 				result = "Error"
 
 	# dlib.hit_enter_to_continue()
+
 	return result
 
